@@ -81,30 +81,6 @@ class MarkViewSet(viewsets.ModelViewSet):
         """Detail selected homework (mark object) for selected lection."""
         return super().retrieve(self, request, *args, **kwargs)
 
-    def hand_over_homework(self, request, mark):
-        """
-        Additional function for updating homework solution.
-        Also make homework status "done".
-        """
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            solution = serializer.validated_data.get('solution')
-            if solution:
-                setattr(mark, 'solution', solution)
-                setattr(mark, 'status', 'done')
-                mark.save()
-        return serializer.errors
-
-    def grade_homework(self, request, mark):
-        """Additional function for updating mark for homework."""
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            rate = serializer.validated_data.get('mark')
-            if rate:
-                setattr(mark, 'mark', rate)
-                mark.save()
-        return serializer.errors
-
     @lection_existence_validation_decorator
     @access_to_course_validation_decorator
     def update(self, request, *args, **kwargs):
@@ -114,11 +90,23 @@ class MarkViewSet(viewsets.ModelViewSet):
         can update field "mark". Also add comments for selected homework mark.
         """
         user = self.request.user
+
         mark = self.get_object()
-        if user.role == 'student':
-            errors = self.hand_over_homework(request, mark)
-        else:
-            errors = self.grade_homework(request, mark)
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            if user.role == 'student':
+                solution = serializer.validated_data.get('solution')
+                if solution:
+                    setattr(mark, 'solution', solution)
+                    setattr(mark, 'status', 'done')
+                    mark.save()
+            else:
+                rate = serializer.validated_data.get('mark')
+                if rate:
+                    setattr(mark, 'mark', rate)
+                    mark.save()
+        errors = serializer.errors
+
         serializer = CommentSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             comment = serializer.validated_data.get('comment')
