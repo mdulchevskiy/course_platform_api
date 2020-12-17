@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from course_api.models import Homework
-from course_api.serializers.ser_lection import LectionSerializer
+from course_api.serializers.lection import LectionSerializer
 
 
 class HomeworkSerializer(serializers.ModelSerializer):

@@ -4,9 +4,13 @@ from course_api.group_permissions import get_group_permissions
 from course_api.models import (PlatformUser,
                                Student,
                                Teacher, )
+from course_api.validators import isalpha_validator
 
 
 class UserSerializer(serializers.ModelSerializer):
+    first_name = serializers.CharField(max_length=30, validators=[isalpha_validator])
+    last_name = serializers.CharField(max_length=50, validators=[isalpha_validator])
+
     class Meta:
         model = PlatformUser
         fields = ('id', 'username', 'first_name', 'last_name', 'password', 'role')
@@ -21,16 +25,6 @@ class UserSerializer(serializers.ModelSerializer):
         if any(lit.isspace() for lit in value):
             raise serializers.ValidationError("Not a valid password: whitespaces aren't allowed.")
         return value
-
-    def validate_first_name(self, value):
-        if not value.isalpha():
-            raise serializers.ValidationError('Not a valid name: only letters are allowed.')
-        return value.capitalize()
-
-    def validate_last_name(self, value):
-        if not value.isalpha():
-            raise serializers.ValidationError('Not a valid surname: only letters are allowed.')
-        return value.capitalize()
 
     def create(self, validated_data):
         """

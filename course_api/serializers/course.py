@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from course_api.models import Course
-from course_api.serializers.ser_lection import LectionSerializer
-from course_api.serializers.ser_student import StudentSerializer
-from course_api.serializers.ser_teacher import TeacherSerializer
+from course_api.serializers.lection import LectionSerializer
+from course_api.serializers.student import StudentSerializer
+from course_api.serializers.teacher import TeacherSerializer
 
 
 class CourseSerializer(serializers.ModelSerializer):
