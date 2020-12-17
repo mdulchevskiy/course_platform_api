@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.db.models import Q
 from django.utils.decorators import method_decorator
 from rest_framework import (permissions,
@@ -80,8 +81,9 @@ class HomeworkViewSet(viewsets.ModelViewSet):
                 serializer.save()
                 homework = Homework.objects.get(id=serializer.data['id'])
                 students = Student.objects.filter(courses__id=course_id)
-                lection.homeworks.add(homework)
-                homework.students.set(students)
+                with transaction.atomic():
+                    lection.homeworks.add(homework)
+                    homework.students.set(students)
                 serializer = self.get_serializer(homework)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             message = {'error': f'The following arguments are expected: {expected_field}.'}

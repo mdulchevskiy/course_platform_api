@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.db.models import Q
 from django.utils.decorators import method_decorator
 from rest_framework import (permissions,
@@ -113,8 +114,9 @@ class MarkViewSet(viewsets.ModelViewSet):
             if comment:
                 serializer.save()
                 comment_object = Comment.objects.filter(id=serializer.data['id'])
-                comment_object.update(comment=f'{user.first_name} {user.last_name}: {comment}')
-                mark.comments.add(comment_object.first())
+                with transaction.atomic():
+                    comment_object.update(comment=f'{user.first_name} {user.last_name}: {comment}')
+                    mark.comments.add(comment_object.first())
         errors.update(serializer.errors)
         if errors:
             return Response(errors, status=status.HTTP_400_BAD_REQUEST)
