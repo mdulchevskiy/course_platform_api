@@ -8,13 +8,14 @@ from course_api.validators import isalpha_validator
 
 
 class UserSerializer(serializers.ModelSerializer):
-    first_name = serializers.CharField(max_length=30, validators=[isalpha_validator])
-    last_name = serializers.CharField(max_length=50, validators=[isalpha_validator])
-
     class Meta:
         model = PlatformUser
         fields = ('id', 'username', 'first_name', 'last_name', 'password', 'role')
         read_only_fields = ('id', )
+        extra_kwargs = {
+            'first_name': {'validators': [isalpha_validator]},
+            'last_name': {'validators': [isalpha_validator]},
+        }
 
     def validate_username(self, value):
         if not value.isalnum():
