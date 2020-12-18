@@ -13,6 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'first_name', 'last_name', 'password', 'role')
         read_only_fields = ('id', )
         extra_kwargs = {
+            'password': {'required': True},
             'first_name': {'validators': [isalpha_validator]},
             'last_name': {'validators': [isalpha_validator]},
         }
