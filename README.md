@@ -66,7 +66,7 @@
    Make SQL queries in MySQL:
    
       * Create user: "CREATE USER 'test_user'@'localhost' IDENTIFIED BY 'password';"
-      * Set privileges: "GRANT ALL PRIVILEGES ON *.* TO 'test_user'@'localhost';"
+      * Set privileges: "GRANT ALL PRIVILEGES ON *.\* TO 'test_user'@'localhost';"
       * Create database: "CREATE DATABASE IF NOT EXISTS 'database';"
      
    Configure next fields in settings.py:
@@ -75,14 +75,19 @@
       * 'USER': 'test_user'
       * 'PASSWORD': 'password'
       * 'HOST': 'localhost'
+      
+6. Make migrations
 
-6. Run Server
+   ```
+   python manage.py makemigrations
+   ```
+7. Run Server
 
    ```
    python manage.py runserver
    python run_server.py
    ```
-6. Get documentation
+8. Get documentation
 
    ```
    http://127.0.0.1:8000/swagger/
